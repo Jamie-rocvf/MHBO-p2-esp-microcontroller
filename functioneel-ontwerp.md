@@ -155,11 +155,11 @@ De functionele eisen zijn opgesteld op basis van de requirements volgens de MoSC
 
 #### M7. Snelheidscategorieën tonen
 
-**Beschrijving:** Het dashboard deelt iedere geldige meting in een snelheidscategorie in. Er worden minimaal drie categorieën gebruikt: lage snelheid, normale snelheid en hoge snelheid.
+**Beschrijving:** Het dashboard deelt iedere geldige meting in een snelheidscategorie in. Er worden minimaal drie categorieën gebruikt: lage snelheid (15 km/h), normale snelheid (30 km/h) en hoge snelheid(40 km/h).
 
 **Functionele uitwerking:**
 - Elke geldige meting krijgt precies één categorie toegewezen.
-- De grenswaarden van de categorieën worden door de projectgroep vastgesteld: [grenswaarde lage/normale snelheid] km/h en [grenswaarde normale/hoge snelheid] km/h.
+- De grenswaarden van de categorieën worden door de projectgroep vastgesteld: 15 km/h en 40 km/h.
 - De grenswaarden worden zichtbaar gemaakt voor de gebruiker, bijvoorbeeld in een legenda of op een informatiepagina.
 - Elke categorie heeft een eigen kleur én een eigen tekstlabel, zodat de categorie niet alleen via kleur te herkennen is.
 
@@ -189,7 +189,7 @@ De functionele eisen zijn opgesteld op basis van de requirements volgens de MoSC
 - Een meting wordt als ongeldig beschouwd wanneer:
   - een waarde ontbreekt of niet numeriek is;
   - de snelheid negatief is;
-  - de snelheid boven een realistische bovengrens ligt (grenswaarde te bepalen door de projectgroep: [bovengrens] km/h);
+  - de snelheid boven een realistische bovengrens ligt (grenswaarde te bepalen door de projectgroep: 100 km/h);
   - het tijdstip ontbreekt of niet geldig is;
   - het tijdstip in de toekomst ligt of duidelijk niet bij de rest van de metingen past.
 - Ongeldige metingen worden niet opgeslagen in het hoofdoverzicht of de grafiek.
