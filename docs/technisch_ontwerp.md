@@ -9,14 +9,15 @@ Casus 1: Visualisatie van snelheidsdata in een dashboard
 | **Teamleden**        | Jamie Leijst, Ian van Nieuwkerk |
 | **Opleiding / klas** | Beste mhbo groepje              |
 | **Docent**           | Hans Rijk & Marcel Runte        |
-| **Datum**            | 20 november 2026                |
-| **Versie**           | 0.1                             |
+| **Datum**            | 27 november 2026                |
+| **Versie**           | 0.2                             |
 
 # Versiebeheer
 
 | **Versie** | **Datum**  | **Auteur**        | **Wijziging**                          |
 |------------|------------|-------------------|----------------------------------------|
 | 0.1        | 20-11-2026 | Ian van nieuwkerk | Eerste opzet van het technisch ontwerp |
+| 0.2        | 27-11-2026 | [auteur invullen] | ESP8266-programma omgezet naar MicroPython |
 |            |            |                   |                                        |
 
 # Inhoudsopgave
@@ -45,7 +46,7 @@ Casus 1: Visualisatie van snelheidsdata in een dashboard
 
     - 6.1 Overzicht en gegevensstroom
 
-    - 6.2 ESP8266-firmware
+    - 6.2 ESP8266-programma (MicroPython)
 
     - 6.3 Validatiemodule
 
@@ -107,19 +108,20 @@ Het project gebruikt de volgende hardware. Er zijn geen andere materialen beschi
 |-----------------|--------------------------------------------------------|-----------------------------------------------------------|
 | Microcontroller | ESP8266 met ingebouwde WiFi                            | Genereert en verstuurt snelheidsmetingen                  |
 | Computer        | Laptop of pc van een teamlid (Windows, macOS of Linux) | Draait de server, de database en het dashboard            |
-| USB-kabel       | USB naar micro-USB                                     | Voeding en het uploaden van de firmware vanaf de computer |
+| USB-kabel       | USB naar micro-USB                                     | Voeding en het uploaden van de firmware en het programma vanaf de computer |
 
-**Beperking:** er is geen snelheidssensor beschikbaar. De ESP8266 meet daarom geen echte voertuigsnelheid, maar genereert in de firmware realistische testwaarden (een geleidelijk stijgende en dalende snelheid met af en toe een uitschieter). De testwaarden worden op dezelfde manier verstuurd als echte metingen. Wanneer later een echte sensor wordt aangesloten, hoeft alleen de functie die de snelheid bepaalt te worden vervangen. De rest van het systeem blijft gelijk.
+**Beperking:** er is geen snelheidssensor beschikbaar. De ESP8266 meet daarom geen echte voertuigsnelheid, maar genereert in het MicroPython-programma op de ESP realistische testwaarden (een geleidelijk stijgende en dalende snelheid met af en toe een uitschieter). De testwaarden worden op dezelfde manier verstuurd als echte metingen. Wanneer later een echte sensor wordt aangesloten, hoeft alleen de functie die de snelheid bepaalt te worden vervangen. De rest van het systeem blijft gelijk.
 
-Om ook foutieve metingen te kunnen testen, kan de firmware bewust af en toe een ongeldige waarde versturen (bijvoorbeeld een negatieve snelheid of een ontbrekend veld).
+Om ook foutieve metingen te kunnen testen, kan het programma bewust af en toe een ongeldige waarde versturen (bijvoorbeeld een negatieve snelheid of een ontbrekend veld).
 
 ## 5.3 Software, besturingssysteem en server
 
 | **Onderdeel**              | **Keuze**                                          | **Toelichting**                              |
 |----------------------------|----------------------------------------------------|----------------------------------------------|
 | Besturingssysteem computer | Windows, macOS of Linux                            | De gekozen software werkt op alle drie       |
-| Besturingssysteem ESP8266  | Geen (firmware draait direct op de chip)           | Programmeren via Arduino IDE of PlatformIO   |
-| Programmeertaal firmware   | C++ (Arduino-framework voor ESP8266)               | Standaard voor de ESP8266                    |
+| Besturingssysteem ESP8266  | Geen; MicroPython-firmware draait direct op de chip | De Python-code draait via de MicroPython-interpreter |
+| Programmeertaal ESP8266    | Python 3 (MicroPython)                             | Zelfde taal als de backend; werkt op de ESP8266 |
+| Hulpmiddelen ESP8266       | esptool (firmware flashen) en Thonny (code uploaden) | Alleen nodig op de computer van een teamlid |
 | Programmeertaal backend    | Python 3 met het framework Flask                   | Eenvoudig te leren en snel een API te bouwen |
 | Frontend                   | HTML, CSS en JavaScript                            | Draait in elke moderne browser               |
 | Grafiekbibliotheek         | Chart.js                                           | Toont het snelheidsverloop als lijngrafiek   |
@@ -151,7 +153,7 @@ Het netwerk bestaat uit een bestaand WiFi-netwerk (thuisrouter of mobiele hotspo
 | Verbinding         | WiFi 2,4 GHz (de ESP8266 ondersteunt geen 5 GHz)                                      |
 | Protocol           | HTTP over het lokale netwerk                                                          |
 | Gegevensformaat    | JSON                                                                                  |
-| Adressering        | De computer heeft een vast of bekend lokaal IP-adres dat in de firmware is ingesteld  |
+| Adressering        | De computer heeft een vast of bekend lokaal IP-adres dat in het programma op de ESP (bestand config.py) is ingesteld  |
 | Tijdsynchronisatie | De ESP8266 haalt de tijd op via NTP, zodat elke meting een betrouwbaar tijdstip heeft |
 
 Het netwerk is niet gekoppeld aan het internet voor de werking van het systeem, behalve voor de NTP-tijdsynchronisatie en eventueel het laden van de grafiekbibliotheek.
@@ -162,7 +164,7 @@ Het netwerk is niet gekoppeld aan het internet voor de werking van het systeem, 
 
 Het systeem bestaat uit zes softwarecomponenten die samen één keten vormen:
 
-1.  De **ESP8266-firmware** meet (simuleert) een snelheid en verstuurt die als JSON naar de server.
+1.  Het **ESP8266-programma** meet (simuleert) een snelheid en verstuurt die als JSON naar de server.
 
 2.  De **API** ontvangt de meting en geeft die aan de **validatiemodule**.
 
@@ -170,7 +172,7 @@ Het systeem bestaat uit zes softwarecomponenten die samen één keten vormen:
 
 4.  Het **dashboard** vraagt de API regelmatig om de gegevens, laat die met behulp van de **categoriemodule** zien als categorie en waarschuwing, en tekent de grafiek.
 
-## 6.2 ESP8266-firmware
+## 6.2 ESP8266-programma (MicroPython)
 
 **Doel:** regelmatig een snelheidsmeting met tijdstip naar de server sturen.
 
@@ -182,11 +184,13 @@ Het systeem bestaat uit zes softwarecomponenten die samen één keten vormen:
 | Tijdsynchronisatie | Haalt de actuele tijd op via NTP en voorziet elke meting van een UTC-tijdstip.                                                                          |
 | Snelheidsfunctie   | Geeft de huidige snelheid terug. Nu een simulatie, later vervangbaar door een echte sensor.                                                             |
 | Verzendfunctie     | Stuurt elke 2 seconden een HTTP POST-verzoek naar /api/metingen.                                                                                        |
-| Foutafhandeling    | Als de server niet bereikbaar is of een foutmelding terugstuurt, wordt dit in de seriële monitor getoond en wordt de volgende meting normaal verstuurd. |
+| Foutafhandeling    | Als de server niet bereikbaar is of een foutmelding terugstuurt, wordt dit in de shell (seriële verbinding) getoond en wordt de volgende meting normaal verstuurd. |
 
 Voorbeeld van een bericht:
 
 > { "snelheid": 87.5, "gemeten_op": "2026-11-20T10:15:30Z" }
+
+Het programma is geschreven in MicroPython. De tijd wordt opgehaald met de module `ntptime` en het tijdstip wordt gemaakt met `time.gmtime()`, omdat MicroPython de uitkomst van `time.time()` vanaf het jaar 2000 telt. De WiFi-gegevens, het IP-adres van de server en de testinstelling staan in een apart bestand `config.py`.
 
 ## 6.3 Validatiemodule
 

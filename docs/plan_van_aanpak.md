@@ -1,6 +1,6 @@
 # Plan van aanpak – Snelheidsdashboard
 
-Project MHBO-p2-esp-microcontroller · Casus 1 · Versie 0.1 · 27 november 2026
+Project MHBO-p2-esp-microcontroller · Casus 1 · Versie 0.2 · 27 november 2026
 
 ## Voorblad
 
@@ -13,13 +13,14 @@ Project MHBO-p2-esp-microcontroller · Casus 1 · Versie 0.1 · 27 november 2026
 | **Teamleden** | Jamie Leijst, Ian van Nieuwkerk |
 | **Docenten** | Hans Rijk & Marcel Runte |
 | **Datum** | 27 november 2026 |
-| **Versie** | 0.1 |
+| **Versie** | 0.2 |
 
 ## Versiebeheer
 
 | Versie | Datum | Auteur(s) | Wijziging |
 |---|---|---|---|
 | 0.1 | 27-11-2026 | Ian, Jamie | Eerste opzet van het plan van aanpak |
+| 0.2 | 27-11-2026 | [auteur invullen] | ESP8266-programma omgezet naar MicroPython |
 | | | | |
 
 ## Inhoudsopgave
@@ -57,6 +58,7 @@ Het doel is een overzichtelijk en betrouwbaar prototype waarmee een gebruiker ac
 - Het prototype legt geen boetes of sancties op, wordt niet gekoppeld aan politie- of verkeerssystemen en doet geen persoonsgerichte profilering (W1 t/m W3).
 - Het prototype is geen professioneel verkeerssysteem.
 - Het enige beschikbare materiaal is een ESP8266. Omdat er geen snelheidssensor is, worden de snelheidswaarden gesimuleerd.
+- De code voor de ESP8266 wordt in MicroPython (Python) geschreven.
 
 ## 3. Op te leveren producten
 
@@ -65,7 +67,7 @@ Het doel is een overzichtelijk en betrouwbaar prototype waarmee een gebruiker ac
 | Functioneel ontwerp | Beschrijving van wat het systeem moet doen, met functionele eisen, acceptatiecriteria en ethische analyse |
 | Technisch ontwerp | Beschrijving van hardware, software en softwarecomponenten |
 | Plan van aanpak | Dit document |
-| ESP8266-firmware | Software op de ESP die snelheidsmetingen verstuurt |
+| ESP8266-programma (MicroPython) | Python-programma op de ESP dat snelheidsmetingen verstuurt |
 | Server met database | Ontvangt, valideert en bewaart de metingen |
 | Dashboard | Webpagina met actuele snelheid, grafiek, historie, filters, samenvatting en waarschuwingen |
 
@@ -76,7 +78,7 @@ Het project wordt in vijf fasen uitgevoerd. De volgorde van het bouwen volgt de 
 | Fase | Activiteiten | Resultaat |
 |---|---|---|
 | 1. Analyse en ontwerp | Casus en requirements bestuderen, functioneel en technisch ontwerp opstellen, ethische analyse uitvoeren | Functioneel ontwerp en technisch ontwerp |
-| 2. Bouw ESP en server | Firmware voor de ESP8266 maken, server en database opzetten, validatie van metingen bouwen | ESP stuurt metingen die worden gevalideerd en opgeslagen (M1, M2, M9) |
+| 2. Bouw ESP en server | MicroPython op de ESP8266 zetten, het Python-programma voor de ESP maken, server en database opzetten, validatie van metingen bouwen | ESP stuurt metingen die worden gevalideerd en opgeslagen (M1, M2, M9) |
 | 3. Bouw dashboard | Actuele snelheid, historie, aanpassen en verwijderen, grafiek, categorieën en waarschuwing bouwen | Werkend dashboard met alle Must haves (M1 t/m M10) |
 | 4. Uitbreiding en testen | Should haves toevoegen (filteren, samenvatting, periode, waarschuwingen terugvinden, zoeken) en alles testen aan de hand van de acceptatiecriteria | Geteste versie met Should haves (S1 t/m S5) |
 | 5. Afronding | Feedback verwerken, documenten bijwerken, resultaat presenteren aan de docenten | Opgeleverd prototype en bijgewerkte documentatie |
@@ -142,4 +144,5 @@ De taken worden aan het begin van elke fase verdeeld. Er wordt goed afgestemd wi
 | Een taak is niet op tijd af | Direct overleggen hoe de achterstand wordt ingehaald, zo nodig met prioriteit voor de Must haves |
 | Het werk is te groot voor de beschikbare tijd | Volgorde van bouwen volgens MoSCoW; Could haves vervallen als er geen tijd voor is |
 | Het WiFi-netwerk werkt niet goed met de ESP8266 | Een 2,4 GHz-netwerk of mobiele hotspot gebruiken |
+| MicroPython flashen of de HTTP-module op de ESP lukt niet | Het stappenplan voor de ESP8266-code volgen (stap 1 en 6), eerst met een kort testprogramma beginnen en bij problemen een lagere baudrate of een andere HTTP-module proberen |
 | Onenigheid in het team | Aanspreken, een gesprek plannen en zo nodig de docent inschakelen |
